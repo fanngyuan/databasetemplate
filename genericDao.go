@@ -7,8 +7,8 @@ import (
 type GenericDao interface{
 	Storage
 	GetAll()(object interface{},err error)
-	createTable()
-	truncateTable()
+	CreateTable()
+	TruncateTable()
 }
 
 type GenericDaoImpl struct{
