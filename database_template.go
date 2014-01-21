@@ -14,6 +14,7 @@ type DatabaseTemplate interface{
 	Query(sql string,mapRow MapRow,params ...interface{})(object interface{},err error)
 	Exec(sql string,params ...interface{})(err error)
 	QueryList(sql string,mapRow MapRow,params ...interface{})([]interface{},error)
+	QueryObject(sql string,mapRow MapRow,params ...interface{})(object interface{},err error)
 }
 
 func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...interface{})(object interface{},err error){
