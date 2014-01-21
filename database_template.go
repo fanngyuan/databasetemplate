@@ -42,6 +42,18 @@ func (this *DatabaseTemplateImpl) QueryList(sql string,mapRow MapRow,params ...i
 	return resArray,nil
 }
 
+func (this *DatabaseTemplateImpl) QueryObject(sql string,mapRow MapRow,params ...interface{})(object interface{},err error){
+	result,error:=this.Conn.Query(sql,params...)
+	if error!=nil {
+		err=error
+		return
+	}
+	if result.Next(){
+		object,err=mapRow(result)
+	}
+	return
+}
+
 func (this *DatabaseTemplateImpl) Exec(sql string,params ...interface{})(err error){
 	_,error:=this.Conn.Exec(sql,params...)
 	if error!=nil {
