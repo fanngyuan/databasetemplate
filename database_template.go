@@ -13,7 +13,7 @@ type MapRow func(resultSet *sql.Rows)(object interface{},err error)
 type DatabaseTemplate interface{
 	Query(sql string,mapRow MapRow,params ...interface{})(object interface{},err error)
 	Exec(sql string,params ...interface{})(err error)
-	QueryList(sql string,mapRow MapRow,params ...interface{})([]interface{},error)
+	QueryArray(sql string,mapRow MapRow,params ...interface{})([]interface{},error)
 	QueryObject(sql string,mapRow MapRow,params ...interface{})(object interface{},err error)
 }
 
@@ -27,7 +27,7 @@ func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...inter
 	return
 }
 
-func (this *DatabaseTemplateImpl) QueryList(sql string,mapRow MapRow,params ...interface{})([]interface{},error){
+func (this *DatabaseTemplateImpl) QueryArray(sql string,mapRow MapRow,params ...interface{})([]interface{},error){
 	result,err:=this.Conn.Query(sql,params...)
 	if err!=nil {
 		return nil,err
