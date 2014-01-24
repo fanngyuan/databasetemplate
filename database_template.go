@@ -19,6 +19,7 @@ type DatabaseTemplate interface{
 
 func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...interface{})(object interface{},err error){
 	result,error:=this.Conn.Query(sql,params...)
+	defer result.Close()
 	if error!=nil {
 		err=error
 		return
@@ -29,6 +30,7 @@ func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...inter
 
 func (this *DatabaseTemplateImpl) QueryArray(sql string,mapRow MapRow,params ...interface{})([]interface{},error){
 	result,err:=this.Conn.Query(sql,params...)
+	defer result.Close()
 	if err!=nil {
 		return nil,err
 	}
@@ -45,6 +47,7 @@ func (this *DatabaseTemplateImpl) QueryArray(sql string,mapRow MapRow,params ...
 
 func (this *DatabaseTemplateImpl) QueryObject(sql string,mapRow MapRow,params ...interface{})(object interface{},err error){
 	result,error:=this.Conn.Query(sql,params...)
+	defer result.Close()
 	if error!=nil {
 		err=error
 		return
