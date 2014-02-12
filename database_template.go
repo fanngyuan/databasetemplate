@@ -15,6 +15,7 @@ type MapRow func(resultSet *sql.Rows)(object interface{},err error)
 type DatabaseTemplate interface{
 	Query(sql string,mapRow MapRow,params ...interface{})(object interface{},err error)
 	Exec(sql string,params ...interface{})(err error)
+	ExecForResult(sql string,params ...interface{})(sql.Result,error)
 	QueryArray(sql string,mapRow MapRow,params ...interface{})([]interface{},error)
 	QueryIntoArray(resultList interface{},sql string,mapRow MapRow,params ...interface{})(error)
 	QueryObject(sql string,mapRow MapRow,params ...interface{})(object interface{},err error)
@@ -27,7 +28,11 @@ func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...inter
 		err=error
 		return
 	}
-	object,err=mapRow(result)
+	if result.Next(){
+		object,err=mapRow(result)
+	}else{
+		return nil,nil
+	}
 	return
 }
 
@@ -115,6 +120,11 @@ func (this *DatabaseTemplateImpl) Exec(sql string,params ...interface{})(err err
 		err=error
 	}
 	return
+}
+
+func (this *DatabaseTemplateImpl) ExecForResult(sql string,params ...interface{})(sql.Result,error){
+	result,error:=this.Conn.Exec(sql,params...)
+	return result,error
 }
 
 // toSliceType returns the element type of the given object, if the object is a
