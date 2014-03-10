@@ -28,6 +28,9 @@ func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...inter
 		err=error
 		return
 	}
+	if result==nil{
+		return nil,nil
+	}
 	if result.Next(){
 		object,err=mapRow(result)
 	}else{
@@ -43,6 +46,9 @@ func (this *DatabaseTemplateImpl) QueryArray(sql string,mapRow MapRow,params ...
 		return nil,err
 	}
 	var resArray []interface{}
+	if result==nil{
+		return nil,nil
+	}
 	for result.Next(){
 		obj,err:=mapRow(result)
 		if err!=nil{
@@ -74,6 +80,9 @@ func(this *DatabaseTemplateImpl) QueryIntoArray(resultList interface{},sql strin
 	defer result.Close()
 	if err!=nil {
 		return err
+	}
+	if result==nil{
+		return nil
 	}
 	for result.Next(){
 		v,err:=mapRow(result)
@@ -107,6 +116,9 @@ func (this *DatabaseTemplateImpl) QueryObject(sql string,mapRow MapRow,params ..
 	if error!=nil {
 		err=error
 		return
+	}
+	if result==nil{
+		return nil,nil
 	}
 	if result.Next(){
 		object,err=mapRow(result)
