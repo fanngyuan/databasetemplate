@@ -58,6 +58,14 @@ func TestExec(t *testing.T){
         return &t,err
     }
 
+
+	list,err:=dbTemplate.Query("select a,b,c from test",mapRow)
+	if list!=nil{
+		t.Error("list should be nil",list)
+	}
+	if err.Error()!="Error 1054: Unknown column 'c' in 'field list'"{
+		t.Errorf("error should be Error 1054: Unknown column 'c' in 'field list'")
+	}
 	var tests []Test
 	err=dbTemplate.QueryIntoArray(&tests,"select * from test",mapRow)
 	if err!=nil{
