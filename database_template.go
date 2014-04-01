@@ -26,7 +26,7 @@ func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...inter
 	defer result.Close()
 	if error!=nil {
 		err=error
-		return
+		return nil,err
 	}
 	if result==nil{
 		return nil,nil
