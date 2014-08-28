@@ -18,7 +18,7 @@ type DatabaseTemplate interface{
 	ExecForResult(sql string,params ...interface{})(sql.Result,error)
 	QueryArray(sql string,mapRow MapRow,params ...interface{})([]interface{},error)
 	QueryIntoArray(resultList interface{},sql string,mapRow MapRow,params ...interface{})(error)
-	QueryObject(sql string,mapRow MapRow,params ...interface{})(object interface{},err error)
+	QueryObject(sql string,mapRow MapRow,params ...interface{})(interface{},error)
 }
 
 func (this *DatabaseTemplateImpl) Query(sql string,mapRow MapRow,params ...interface{})(object interface{},err error){
@@ -113,21 +113,21 @@ func(this *DatabaseTemplateImpl) QueryIntoArray(resultList interface{},sql strin
 	return nil
 }
 
-func (this *DatabaseTemplateImpl) QueryObject(sql string,mapRow MapRow,params ...interface{})(object interface{},err error){
+func (this *DatabaseTemplateImpl) QueryObject(sql string,mapRow MapRow,params ...interface{})(interface{},error){
 	result,error:=this.Conn.Query(sql,params...)
 	d:=func(){if result!=nil {result.Close()}}
 	defer d()
 	if error!=nil {
-		err=error
-		return
+		return nil,error
 	}
 	if result==nil{
 		return nil,nil
 	}
 	if result.Next(){
-		object,err=mapRow(result)
+		object,err:=mapRow(result)
+		return object,err
 	}
-	return
+	return nil,nil
 }
 
 func (this *DatabaseTemplateImpl) Exec(sql string,params ...interface{})(err error){
