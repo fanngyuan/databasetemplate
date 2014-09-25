@@ -69,10 +69,6 @@ func (this *DatabaseTemplateImpl) QueryArray(sql string, mapRow MapRow, params .
 	return resArray, nil
 }
 
-func (this *DatabaseTemplateImpl) QueryIntoArray(resultList interface{}, sql string, mapRow MapRow, params interface{}) error {
-
-}
-
 func (this *DatabaseTemplateImpl) QueryIntoArray(resultList interface{}, sql string, mapRow MapRow, params ...interface{}) error {
 	pointerElements := true
 	t, err := toType(resultList)
