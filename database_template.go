@@ -11,6 +11,7 @@ type DatabaseTemplateImpl struct {
 }
 
 type MapRow func(resultSet *sql.Rows) (object interface{}, err error)
+type MapRowInto func(resultSet *sql.Rows, object interface{}) (err error)
 
 type DatabaseTemplate interface {
 	Query(sql string, mapRow MapRow, params ...interface{}) (object interface{}, err error)
@@ -19,6 +20,7 @@ type DatabaseTemplate interface {
 	QueryArray(sql string, mapRow MapRow, params ...interface{}) ([]interface{}, error)
 	QueryIntoArray(resultList interface{}, sql string, mapRow MapRow, params ...interface{}) error
 	QueryObject(sql string, mapRow MapRow, params ...interface{}) (interface{}, error)
+	QueryIntoObject(sql string, mapRow MapRowInto, out interface{}, params ...interface{}) error
 }
 
 func (this *DatabaseTemplateImpl) Query(sql string, mapRow MapRow, params ...interface{}) (object interface{}, err error) {
@@ -144,6 +146,27 @@ func (this *DatabaseTemplateImpl) QueryObject(sql string, mapRow MapRow, params 
 		return object, err
 	}
 	return nil, nil
+}
+
+func (this *DatabaseTemplateImpl) QueryIntoObject(sql string, mapRow MapRowInto, out interface{}, params ...interface{}) error {
+	result, error := this.Conn.Query(sql, params...)
+	d := func() {
+		if result != nil {
+			result.Close()
+		}
+	}
+	defer d()
+	if error != nil {
+		return error
+	}
+	if result == nil {
+		return nil
+	}
+	if result.Next() {
+		err := mapRow(result, out)
+		return err
+	}
+	return nil
 }
 
 func (this *DatabaseTemplateImpl) Exec(sql string, params ...interface{}) (err error) {
